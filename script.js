@@ -1,6 +1,12 @@
 let player = {
 	name: "Per",
-	chips: 200
+	chips: 200,
+	earnChips: function () {
+		this.chips += 50
+	},
+	loseChips: function () {
+		this.chips -= 50
+	}
 }
 
 let cards = []
@@ -17,7 +23,6 @@ let playerEl = document.getElementById("player-el")
 playerEl.textContent = player.name + ": $" + player.chips
 
 
-// Create a function, getRandomCard(), that always returns the number 5
 function getRandomCard() {
 	let i = Math.floor(Math.random() * 13) + 1;
 	if (i > 10)
@@ -44,19 +49,31 @@ function renderGame() {
 	sumEl.textContent = "Sum: " + sum
 	if (sum <= 20) {
 		message = "Do you want to draw a new card?"
+		isAlive = true
 	} else if (sum === 21) {
 		message = "You've got Blackjack!"
 		hasBlackJack = true
+		isAlive = false
+		player.earnChips()
+		playerEl.textContent = player.name + ": $" + player.chips
 	} else {
 		message = "You're out of the game!"
 		isAlive = false
+		player.loseChips()
+		playerEl.textContent = player.name + ": $" + player.chips
+
 	}
+	if (player.chips < 0)
+		playerEl.textContent = player.name + ": $" + player.chips + "<- Be careful, you're in debt lol"
+	messageEl.textContent = message
+	if (player.chips < -150)
+		playerEl.textContent = player.name + ": $" + player.chips + "<- OMFG stop ! you'll get some serious problems..."
 	messageEl.textContent = message
 }
 
 
 function newCard() {
-	if (isAlive === true && hasBlackJack === false) {
+	if (isAlive === true) {
 		let card = getRandomCard()
 		sum += card
 		cards.push(card)
